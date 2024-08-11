@@ -25,7 +25,16 @@ En este caso utilizamos ipython para mejorar la shell de python.
 
 ipython==8.26.0
 
+
+## Registrar aplicaciones
+
+En el proyecto principal en este caso "**coffee_shop**" vamos a registrar las aplicaciones creadas, esto se hace dentro del archivo settings.py en la lista **INSTALLED_APPS**
+
+
+# Clonar o Subir a producción
+
 ## Instalar las dependencias en producción o al clonar el archivo
 
 - Usamos el comando: **pip install -r requirements.txt**
 - Usamos el comando: **pip install -r requirements-dev.txt**
+
