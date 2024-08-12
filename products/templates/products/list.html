@@ -1,32 +1,45 @@
-<!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Document</title>
-  </head>
-  <body>
-    <table>
-      <thead>
-        <tr>
-          <th>#</th>
-          <th>Nombre</th>
-          <th>Descripción</th>
-          <th>Precio</th>
-          <th>Estado</th>
-        </tr>
-      </thead>
-      <tbody>
+{% extends 'base.html' %}
+{% block title %}
+  Products
+{% endblock %}
+{% block content %}
+  <div class="row p-4">
+    <div class="col-12 mb-4 text-start">
+      <a class="btn btn-outline-dark btn-sm" href="{% url 'add_product' %}">Crear producto</a>
+    </div>
+    <div class="col-12">
+      <div class="row d-flex justify-content-center">
         {% for product in products %}
-          <tr>
-            <td>{{ product.id }}</td>
-            <td>{{ product.name }}</td>
-            <td>{{ product.description }}</td>
-            <td>{{ product.price }}</td>
-            <td>{{ product.available|yesno:'Available,Not Available' }}</td>
-          </tr>
+          <div class="col-12 col-sm-6 col-md-4 col-xl-3 col-xxl-2 mb-4">
+            <div class="card shadow-sm">
+              {% if product.photo %}
+                <img src="{{ product.photo.url }}" class="card-img-top" alt="{{ product.name }}" style="height: 150px; object-fit: cover;" />
+              {% else %}
+                <img src="https://picsum.photos/200/300" class="card-img-top" alt="{{ product.name }}" style="height: 150px; object-fit: cover;" />
+              {% endif %}
+              {% comment %} <img src="https://picsum.photos/200/300" class="card-img-top" alt="{{ product.name }}" style="height: 150px; object-fit: cover;" /> {% endcomment %}
+              <div class="card-body">
+                <h5 class="card-title">{{ product.name }}</h5>
+                <div class="row">
+                  <div class="col-12 text-secondary mb-1" style="font-size: small;">
+                    <small>{{ product.description }}</small>
+                  </div>
+                  <div class="col-12 mb-1">
+                    <small>${{ product.price }}</small>
+                  </div>
+                  <div class="col-12 mb-1">
+                    <small><div class="badge text-bg-{{ product.avaible|yesno:'success,warning' }}">{{ product.avaible|yesno:'Disponible,No disponible' }}</div></small>
+                  </div>
+                  <div class="col-12 text-end">
+                    <button class="btn rounded-circle btn-outline-primary btn-sm"><i class="fa-regular fa-pen-to-square"></i></button>
+                    <button class="btn rounded-circle btn-outline-dark btn-sm"><i class="fa-solid fa-cart-plus"></i></button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
         {% endfor %}
-      </tbody>
-    </table>
-  </body>
-</html>
+      </div>
+    </div>
+  </div>
+{% endblock %}
