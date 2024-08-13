@@ -19,13 +19,26 @@
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span></button>
         <div class="collapse navbar-collapse d-flex justify-content-end" id="navbarNavAltMarkup">
           <div class="navbar-nav">
-            <a class="btn btn-outline-dark btn-sm border-0 active" aria-current="page" href="#"><i class="fa-solid fa-house"></i> Home</a>
-            <a class="btn btn-outline-secondary btn-sm border-0 mx-1" href="{% url 'list_product' %}"><i class="fa-solid fa-mug-hot"></i> Products</a>
+            {% comment %} <a class="btn btn-outline-dark btn-sm border-0 {% if '/home/' in request.path %}active{% endif %}" aria-current="page" href="#"><i class="fa-solid fa-house"></i> Home</a> {% endcomment %}
+            <a class="btn btn-outline-dark btn-sm border-0 mx-1 {% if '/orders/' in request.path %}active{% endif %}" href="{% url 'list_product' %}"><i class="fa-solid fa-mug-hot"></i> Orders</a>
+            <a class="btn btn-outline-dark btn-sm border-0 mx-1 {% if '/products/' in request.path %}active{% endif %}" href="{% url 'list_product' %}"><i class="fa-solid fa-mug-hot"></i> Products</a>
+            {% if user.is_authenticated %}
+              <div class="btn-group dropstart">
+                <button type="button" class="btn btn-outline-dark dropdown-toggle btn-sm" data-bs-toggle="dropdown" aria-expanded="false">{{ user.username }}</button>
+                <ul class="dropdown-menu">
+                  <li>
+                    <form action="{% url 'logout' %}" method="POST">
+                      {% csrf_token %}
+                      <button class="dropdown-item btn border-0"><i class="fas fa-sign-out-alt"></i> Cerrar sesion</button>
+                    </form>
+                  </li>
+                </ul>
+              </div>
+            {% endif %}
           </div>
         </div>
       </div>
     </nav>
-
     <div class="container-fluid">
       {% block content %}
 

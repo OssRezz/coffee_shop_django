@@ -22,7 +22,11 @@
                 <h5 class="card-title">{{ product.name }}</h5>
                 <div class="row">
                   <div class="col-12 text-secondary mb-1" style="font-size: small;">
-                    <small>{{ product.description }}</small>
+                    <small>
+                      <span id="short-description_{{ product.id }}">{{ product.description|slice:':50' }}...</span>
+                      <span id="full-description_{{ product.id }}" style="display: none;">{{ product.description }}</span>
+                      <a href="javascript:void(0);" onclick="toggleDescription({{ product.id }})" id="toggle-link_{{ product.id }}">Mostrar más</a>
+                    </small>
                   </div>
                   <div class="col-12 mb-1">
                     <small>${{ product.price }}</small>
@@ -42,4 +46,21 @@
       </div>
     </div>
   </div>
+  <script>
+    function toggleDescription(id) {
+      var shortDesc = document.getElementById(`short-description_${id}`)
+      var fullDesc = document.getElementById(`full-description_${id}`)
+      var toggleLink = document.getElementById(`toggle-link_${id}`)
+    
+      if (shortDesc.style.display === 'none') {
+        shortDesc.style.display = 'inline'
+        fullDesc.style.display = 'none'
+        toggleLink.textContent = 'Mostrar más'
+      } else {
+        shortDesc.style.display = 'none'
+        fullDesc.style.display = 'inline'
+        toggleLink.textContent = 'Mostrar menos'
+      }
+    }
+  </script>
 {% endblock %}

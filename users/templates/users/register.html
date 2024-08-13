@@ -47,18 +47,16 @@
             <div class="card shadow-sm">
               <div class="card-body">
                 <div class="col-12">
-                  <form method="POST">
+                  <form  method="POST">
                     {% csrf_token %}
                     <div class="row g-4">
                       <div class="col-12 text-center">
                         <i class="fa-solid fa-mug-hot fa-5x"></i>
                       </div>
                       <div class="col-12">{{ form|crispy }}</div>
-                      <div class="col-12 text-center mt-0">
-                        ¿No tienes una cuenta? <a class="btn btn-link btn-sm" href="{% url 'register' %}">Registrate</a>
-                      </div>
                       <div class="col-12 d-grid mb-2">
-                        <button class="btn btn-dark" type="submit">Iniciar sesión</button>
+                        <button class="btn btn-dark mb-2" type="submit">Crear cuenta</button>
+                        <a class="btn btn-dark" type="submit" href="{% url "login" %}">Regresar</a>
                       </div>
                     </div>
                   </form>
