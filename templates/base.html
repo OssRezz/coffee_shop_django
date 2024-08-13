@@ -20,10 +20,10 @@
         <div class="collapse navbar-collapse d-flex justify-content-end" id="navbarNavAltMarkup">
           <div class="navbar-nav">
             {% comment %} <a class="btn btn-outline-dark btn-sm border-0 {% if '/home/' in request.path %}active{% endif %}" aria-current="page" href="#"><i class="fa-solid fa-house"></i> Home</a> {% endcomment %}
-            <a class="btn btn-outline-dark btn-sm border-0 mx-1 {% if '/orders/' in request.path %}active{% endif %}" href="{% url 'list_product' %}"><i class="fa-solid fa-mug-hot"></i> Orders</a>
+            <a class="btn btn-outline-dark btn-sm border-0 mx-1 {% if '/my-orders/' in request.path %}active{% endif %}" href="{% url 'my_orders' %}"><i class="fa-solid fa-mug-hot"></i> My orders</a>
             <a class="btn btn-outline-dark btn-sm border-0 mx-1 {% if '/products/' in request.path %}active{% endif %}" href="{% url 'list_product' %}"><i class="fa-solid fa-mug-hot"></i> Products</a>
             {% if user.is_authenticated %}
-              <div class="btn-group dropstart">
+              <div class="btn-group dropstart mx-1">
                 <button type="button" class="btn btn-outline-dark dropdown-toggle btn-sm" data-bs-toggle="dropdown" aria-expanded="false">{{ user.username }}</button>
                 <ul class="dropdown-menu">
                   <li>

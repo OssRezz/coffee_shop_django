@@ -12,7 +12,7 @@ class Order(models.Model):
     table_number = models.IntegerField()
 
     def __str__(self):
-        return f"order {self.id} by {self.user} to {self.table_number}"
+        return f"Order {self.id} by {self.user} to table #{self.table_number}"
 
 
 class OrderProduct(models.Model):

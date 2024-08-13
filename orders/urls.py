@@ -1,8 +1,7 @@
-# from django.contrib import admin
+# # from django.contrib import admin
 from django.urls import path
-from .views import ProductListView, ProductFormView
+from .views import OrderView
 
 urlpatterns = [
-    path("", ProductListView.as_view(), name="list_product"),
-    path("add/", ProductFormView.as_view(), name="add_product"),
+    path("my-orders/", OrderView.as_view(), name="my_orders"),
 ]
