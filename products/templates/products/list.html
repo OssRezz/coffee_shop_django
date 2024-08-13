@@ -6,6 +6,9 @@
   <div class="row p-4">
     <div class="col-12 mb-4 text-start">
       <a class="btn btn-outline-dark btn-sm" href="{% url 'add_product' %}">Crear producto</a>
+      <button class="btn btn-outline-dark btn-sm" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasRight" aria-controls="offcanvasRight">
+        Ver pedido <div class="badge text-bg-light" id="count-items">0</div>
+      </button>
     </div>
     <div class="col-12">
       <div class="row d-flex justify-content-center">
@@ -35,8 +38,8 @@
                     <small><div class="badge text-bg-{{ product.avaible|yesno:'success,warning' }}">{{ product.avaible|yesno:'Disponible,No disponible' }}</div></small>
                   </div>
                   <div class="col-12 text-end">
-                    <button class="btn rounded-circle btn-outline-primary btn-sm"><i class="fa-regular fa-pen-to-square"></i></button>
-                    <button class="btn rounded-circle btn-outline-dark btn-sm"><i class="fa-solid fa-cart-plus"></i></button>
+                    {% comment %} <button class="btn rounded-circle btn-outline-primary btn-sm"><i class="fa-regular fa-pen-to-square"></i></button> {% endcomment %}
+                    <button class="btn rounded-circle btn-outline-dark btn-sm" onclick="AddProduct({{ product.id }}, '{{ product.name }}')"><i class="fa-solid fa-cart-plus"></i></button>
                   </div>
                 </div>
               </div>
@@ -46,7 +49,94 @@
       </div>
     </div>
   </div>
+
+  <div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasRight" aria-labelledby="offcanvasRightLabel">
+    <div class="offcanvas-header">
+      <h5 class="offcanvas-title" id="offcanvasRightLabel">Pedido</h5>
+      <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+    </div>
+    <div class="offcanvas-body">
+      <div class="row">
+        <div class="col-12 mb-4">
+          <div class="form-floating" id="table-input" style="display: none;">
+            <input type="number" class="form-control" id="table"/>
+            <label for=""># Mesa <b class="text-danger">*</b></label>
+          </div>
+        </div>
+        <div class="col-12 mb-4">
+          <ul class="list-group" id="list_products">
+            <li class="list-group-item text-center border-0"><em>No hay productos agredados al pedido</em></li>
+          </ul>
+        </div>
+        <div class="col-12 d-grid">
+          <button class="btn btn-dark btn-sm" id="btn-create" style="display: none;" onclick="CreateOrder()">Crear pedido</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <script>
+    const btn_create = document.querySelector('#btn-create');
+    const input_table = document.querySelector('#table-input');
+    const count_items = document.querySelector('#count-items');
+    const table = document.querySelector('#table');
+    let Products = []
+
+    const AddProduct = (id, name) => {
+      if (Products.filter((e) => e.product_id == id).length > 0) {
+        return Swal.fire({
+          title: 'Información',
+          text: 'El producto ya se encuentra agregado al pedido',
+          icon: 'info',
+          confirmButtonText: 'Cerrar'
+        })
+      }
+      Products.push({ id: Date.now(), product_id: id, name: name, quantity: 1 });
+      ListProducts();
+      return Swal.fire({
+        title: 'Información',
+        text: 'El producto ha sido agregado',
+        icon: 'success',
+        confirmButtonText: 'Cerrar'
+      })
+    }
+
+    function ListProducts(){
+      const list_products = document.querySelector('#list_products');
+      let html = '';
+      Products.forEach((product) => {
+        html += `
+            <li class="list-group-item">
+              <div class="row d-flex align-items-center">
+                <div class="col-8 d-flex justify-content-start align-items-center px-0">
+                  <button class="btn btn-link btn-sm" onclick="DeleteItem(${product.id})"><i class="fa-regular fa-trash-can"></i></button> ${product.name}
+                </div>
+                <div class="col-4 d-flex justify-content-end">
+                  <small>
+                    <div class="input-group">
+                      <button class="btn btn-outline-secondary btn-sm" type="button" id="decrement" value='${product.id}' onclick='Decrement(${product.id})'>-</button>
+                      <input type="text" class="form-control text-center" id='counter_${product.id}' value="${product.quantity}" readonly />
+                      <button class="btn btn-outline-secondary btn-sm" type="button" id="increment" value='${product.id}' onclick="Increment(${product.id})">+</button>
+                    </div>
+                  </small>
+                </div>
+              </div>
+            </li>
+        `;
+      });
+
+      if(Products.length == 0){
+        html = "<li class='list-group-item text-center border-0'><em>No hay productos agredados al pedido</em></li>";
+        btn_create.style.display = "none";
+        input_table.style.display = "none";
+      } else {
+        btn_create.style.display = "";
+        input_table.style.display = "";
+      }
+      count_items.innerHTML = Products.length;
+      list_products.innerHTML = html;
+    }
+    
     function toggleDescription(id) {
       var shortDesc = document.getElementById(`short-description_${id}`)
       var fullDesc = document.getElementById(`full-description_${id}`)
@@ -61,6 +151,92 @@
         fullDesc.style.display = 'inline'
         toggleLink.textContent = 'Mostrar menos'
       }
+    }
+    const Decrement = (id) =>{
+      let counter = document.getElementById(`counter_${id}`)
+      let value = parseInt(counter.value)
+      if (value > 0) {
+        counter.value = value - 1
+
+        Products = Products.map(product => {
+          if (product.id == id) {
+              return {
+                  ...product,
+                  quantity: value - 1 
+              };
+          }
+          return product; 
+        });
+      }
+    }
+
+    const Increment = (id) =>{
+      let counter = document.getElementById(`counter_${id}`)
+      let value = parseInt(counter.value)
+      counter.value = value + 1
+
+      Products = Products.map(product => {
+        if (product.id == id) {
+            return {
+                ...product,
+                quantity: value + 1
+            };
+        }
+        return product; 
+      });
+    }
+
+    const DeleteItem = (id) =>{
+      Products = Products.filter((e) => e.id != id);
+      ListProducts();
+    }
+
+    const CreateOrder = ()=>{
+      if(table.value == "" || table.value < 0){
+        return Swal.fire({
+          title: 'Información',
+          text: 'Es requerido el numero de la mesa del pedido',
+          icon: 'info',
+          confirmButtonText: 'Cerrar'
+        })
+      }
+
+      let list_Product = [];
+      Products.forEach((product) => {
+        list_Product.push({product: product.product_id, quantity: product.quantity});
+      });
+      let Order = {
+        "table_number" :table.value,
+        "products" : list_Product
+      }
+
+      console.log(Order)
+      const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+      fetch('{% url "create_order" %}', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': csrfToken  
+        },
+        body: JSON.stringify(Order)
+      })
+      .then(response => response.json())
+      .then(data => {
+          if (data.status === 'success') {
+            Products = [];
+            ListProducts();
+            return Swal.fire({
+              title: 'Información',
+              text: 'Pedido creado exitosamente',
+              icon: 'success',
+              confirmButtonText: 'Cerrar'
+            })
+          } else {
+              console.error('Failed to create order:', data.message);
+          }
+      })
+      .catch(error => console.error('Error:', error));
+      
     }
   </script>
 {% endblock %}
